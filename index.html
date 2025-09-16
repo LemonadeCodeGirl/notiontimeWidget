@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>My Notion Widget</title>
+  <style>
+    body { 
+      font-family: 'Courier New', monospace; 
+      text-align: center; 
+      margin-top: 50px; 
+      background: transparent;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    h2 { 
+      color: white; 
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .flip-clock {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .flip-digit {
+      position: relative;
+      width: 60px;
+      height: 80px;
+      perspective: 1000px;
+    }
+    
+    .flip-card {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+    }
+    
+    .flip-card.flip {
+      transform: rotateY(180deg);
+    }
+    
+    .flip-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5em;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    
+    .flip-front {
+      background: linear-gradient(145deg, #2c3e50, #34495e);
+      color: #ecf0f1;
+      border: 2px solid #34495e;
+      /* height: 200%; */
+      height: 100%;
+      align-items: center;
+      display: flex;
+      /* text-align: center; */
+      justify-content: center;
+      font-size: 40px;
+    }
+    
+    .flip-back {
+      background: linear-gradient(145deg, #e74c3c, #c0392b);
+      color: white;
+      border: 2px solid #c0392b;
+      transform: rotateY(180deg);
+    }
+    
+    .separator {
+      display: flex;
+      align-items: center;
+      font-size: 2.5em;
+      color: white;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .label {
+      color: white;
+      margin-top: 20px;
+      font-size: 1.2em;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <h2>Flip Clock Widget</h2>
+  <div class="flip-clock" id="flipClock">
+    <!-- Hours -->
+    <div class="flip-digit">
+      <div class="flip-card" id="hour1">
+        <div class="flip-front">0</div>
+        <!-- <div class="flip-back">0</div> -->
+      </div>
+    </div>
+    <div class="flip-digit">
+      <div class="flip-card" id="hour2">
+        <div class="flip-front">0</div>
+        <!-- <div class="flip-back">0</div> -->
+      </div>
+    </div>
+    
+    <div class="separator">:</div>
+    
+    <!-- Minutes -->
+    <div class="flip-digit">
+      <div class="flip-card" id="min1">
+        <div class="flip-front">0</div>
+        <!-- <div class="flip-back">0</div> -->
+      </div>
+    </div>
+    <div class="flip-digit">
+      <div class="flip-card" id="min2">
+        <div class="flip-front">0</div>
+        <!-- <div class="flip-back">0</div> -->
+      </div>
+    </div>
+    
+    <div class="separator">:</div>
+    
+    <!-- Seconds -->
+    <div class="flip-digit">
+      <div class="flip-card" id="sec1">
+        <div class="flip-front">0</div>
+        <!-- <div class="flip-back">0</div> -->
+      </div>
+    </div>
+    <div class="flip-digit">
+      <div class="flip-card" id="sec2">
+        <div class="flip-front">0</div>
+        <!-- <div class="flip-back">0</div> -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- <div class="label">Current Time</div> -->
+  
+  <script>
+    let previousTime = '';
+    
+    function updateFlipClock() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('en-US', { 
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      
+      if (timeString !== previousTime) {
+        const digits = timeString.replace(/:/g, '').split('');
+        
+        // Update each digit with flip animation
+        updateDigit('hour1', digits[0]);
+        updateDigit('hour2', digits[1]);
+        updateDigit('min1', digits[2]);
+        updateDigit('min2', digits[3]);
+        updateDigit('sec1', digits[4]);
+        updateDigit('sec2', digits[5]);
+        
+        previousTime = timeString;
+      }
+    }
+    
+    function updateDigit(elementId, newDigit) {
+      const card = document.getElementById(elementId);
+      const front = card.querySelector('.flip-front');
+    //   const back = card.querySelector('.flip-back');
+      
+      // Only flip if the digit actually changed
+      if (front.textContent !== newDigit) {
+        // Set the new digit on the back face
+        // back.textContent = newDigit;
+        
+        // Add flip class to trigger animation
+        card.classList.add('flip');
+        
+        // After animation completes, update front and reset
+        setTimeout(() => {
+          front.textContent = newDigit;
+          card.classList.remove('flip');
+        }, 300);
+      }
+    }
+    
+    // Update immediately and then every second
+    updateFlipClock();
+    setInterval(updateFlipClock, 1000);
+  </script>
+</body>
+</html>
